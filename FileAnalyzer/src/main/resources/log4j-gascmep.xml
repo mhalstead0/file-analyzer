@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Appenders -->
+	<appender name="console-appender" class="org.apache.log4j.ConsoleAppender">
+        <param name="threshold" value="info" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{hh:mm:ss} %5p: %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="file-appender" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="logs/GasCMEP.log" />
+        <param name="MaxFileSize" value="1000KB" />
+        <param name="MaxBackupIndex" value="10" />
+        <param name="threshold" value="debug" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd hh:mm:ss:sss} %5p: %m%n" />
+        </layout>
+    </appender>
+	
+	<logger name="com.matthalstead">
+		<level value="debug" />
+	</logger>
+
+	<!-- Root Logger -->
+	<root>
+		<priority value="DEBUG" />
+		<appender-ref ref="console-appender" />
+		<appender-ref ref="file-appender" />
+	</root>
+
+</log4j:configuration>

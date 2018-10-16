@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<loggedCMEPFileFetcher>
+    <directory>/reads/file/folder</directory>
+    <filenamePattern>CMEPIntervalReadRpt.*</filenamePattern>
+    <retainMultipleFiles>false</retainMultipleFiles>
+    <serverName>prodservername</serverName>
+    <systemName>AMIBUS.PROD</systemName>
+    <includeEarlyFile>true</includeEarlyFile>
+    <includeLateFile>true</includeLateFile>
+</loggedCMEPFileFetcher>

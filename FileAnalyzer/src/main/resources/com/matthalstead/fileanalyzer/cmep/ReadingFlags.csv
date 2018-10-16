@@ -1,0 +1,19 @@
+Bit,Description
+0,Comm failure (meter could not be read)
+1,Power outage
+2,Power restoral
+3,Voltage sag
+4,Voltage swell
+5,Missing data
+6,Daylight savings in effect
+7,Meter was out of service
+8,Time Adjustment (direction unspecified)
+9,Overflow
+10,Long interval
+11,Short interval
+12,Test mode
+13,Register rollover detected
+14,Register reset detected
+15,Clock out of sync
+16,Meter install
+17,Meter uninstall

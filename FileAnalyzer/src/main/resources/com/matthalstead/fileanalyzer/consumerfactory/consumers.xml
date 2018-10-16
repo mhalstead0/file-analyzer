@@ -1,0 +1,44 @@
+<consumers basePackage="com.matthalstead.fileanalyzer.">
+	<consumer>
+		<name>CMEPRecordSetCountConsumer</name>
+		<class>cmep.consumers.CMEPRecordSetCountConsumer</class>
+		<panelClass>swing.panels.CMEPRecordCountingPanel</panelClass>
+		<!--
+		<constructorArguments>
+			<constructorArgument>
+				<name>testArg</name>
+				<type>boolean</type>
+				<value>true</value>
+			</constructorArgument>
+		</constructorArguments>
+		-->
+		<root>true</root>
+		<disabled>false</disabled>
+	</consumer>
+	<consumer>
+		<name>CMEPDataIssuesConsumer</name>
+		<class>cmep.consumers.CMEPDataIssuesConsumer</class>
+		<panelClass>swing.panels.CMEPDataIssuesPanel</panelClass>
+		<root>true</root>
+		<disabled>false</disabled>
+	</consumer>
+	<consumer>
+		<name>CMEPFlagConsumer</name>
+		<class>cmep.consumers.CMEPFlagConsumer</class>
+		<panelClass>swing.panels.CMEPFlagCountingPanel</panelClass>
+		<root>true</root>
+		<disabled>false</disabled>
+	</consumer>
+	<!--
+	<consumer>
+		<name>ByteCountingConsumer</name>
+		<class>consumers.ByteCountingConsumer</class>
+		<panelClass>swing.panels.ByteCountingPanel</panelClass>
+		<root>true</root>
+		<disabled>false</disabled>
+	</consumer>
+	-->
+	
+	
+
+</consumers>
