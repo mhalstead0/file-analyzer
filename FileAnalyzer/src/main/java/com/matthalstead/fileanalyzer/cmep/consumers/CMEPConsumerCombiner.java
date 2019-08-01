@@ -19,7 +19,8 @@ public class CMEPConsumerCombiner extends AbstractCMEPConsumer {
 	}
 	
 	private void handleException(Exception e) {
-		throw (e instanceof RuntimeException) ? ((RuntimeException) e) : new RuntimeException(e);
+		//throw (e instanceof RuntimeException) ? ((RuntimeException) e) : new RuntimeException(e);
+		e.printStackTrace();
 	}
 
 	@Override

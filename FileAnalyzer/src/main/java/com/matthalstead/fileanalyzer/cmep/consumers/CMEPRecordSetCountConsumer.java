@@ -42,7 +42,9 @@ public class CMEPRecordSetCountConsumer extends AbstractMeterGroupCMEPConsumer {
 				units = "null";
 			}
 			incrementUnitRecordCount(units);
-			incrementIntervalRecordCount(units, record.getTriplets().size());
+			if (record.getTriplets() != null) {
+				incrementIntervalRecordCount(units, record.getTriplets().size());
+			}
 		}
 		
 	}
