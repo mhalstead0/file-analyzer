@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fileDatabase>
+    <map>
+        <entry>
+            <key>CMEP_test.csv.gz</key>
+            <value>
+                <absoluteFilename>C:\Users\Matt\git\fileanalyzer\FileAnalyzer\filedb\files\CMEP_test.csv.gz</absoluteFilename>
+                <description>CMEP_test.csv.gz</description>
+                <modifyTimestamp>1370884197354</modifyTimestamp>
+                <type>unknown</type>
+            </value>
+        </entry>
+    </map>
+</fileDatabase>
