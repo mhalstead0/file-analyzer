@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.matthalstead.fileanalyzer.util.DateUtils;
 
@@ -27,6 +29,10 @@ public class CMEPRecord {
 	
 	private String parseException;
 	
+	private CMEPRecord() {
+		
+	}
+	
 	public CMEPRecord(String[] fields) {
 		try {
 			recordType = internString(safeGetString(fields, 0));
@@ -48,8 +54,57 @@ public class CMEPRecord {
 	}
 	
 	public static CMEPRecord parse(String line) {
-		String[] fields = line.split(",");
-		CMEPRecord result = new CMEPRecord(fields);
+		//MEPMD01,20080501,VENDOR,UTIL:153000,1234567,9876543,201907091845,,9988776,OK,G,CCFREG,1.0,00000100,2,201907080500,R0,2073,201907090500,R0,2074
+		String oneFieldRegex = "([^,]*)(,|\\Z)";
+		String okFieldRegex = "OK,";
+		String digitsFieldRegex = "([0-9]*),";
+		String timestampRegex = "[12][0-9]{11}";
+		String dqfRegex = "[A-Z][0-9]+";
+		String intervalValueRegex = "-?([0-9]+)|([0-9]*\\.[0-9]+)";
+		String intervalRegex = "(" + timestampRegex + "),(" + dqfRegex + "),(" + intervalValueRegex + ")(,|\\Z)";
+		String recordRegex =
+				oneFieldRegex // recordType
+				+ oneFieldRegex // formatDate
+				+ oneFieldRegex // vendor
+				+ oneFieldRegex // utility
+				+ "(.*)," // meter-identifying info
+				+ okFieldRegex
+				+ oneFieldRegex // meter type
+				+ oneFieldRegex // units
+				+ oneFieldRegex // meter multiplier
+				+ digitsFieldRegex // interval length code
+				+ digitsFieldRegex // listed interval count
+				+ "((" + intervalRegex + ")*)"; // intervals
+		
+		CMEPRecord result = new CMEPRecord();
+		try {
+			Pattern pattern = Pattern.compile(recordRegex);
+			Matcher m = pattern.matcher(line);
+			if (m.matches()) {
+				String identifyingInfo = m.group(9);
+				String intervals = m.group(18);
+
+				System.out.println("identifyingInfo=" + identifyingInfo);
+				System.out.println("intervals=" + intervals);
+
+				result.recordType = m.group(1);
+				result.units = m.group(12);
+				result.intervalLengthCode = m.group(16);
+				result.listedIntervalCount = Integer.parseInt(m.group(17));
+				//private String moduleId;
+				//private String meterId;
+				//private Long fileTimestamp;
+				//private String meterLocation;
+
+//				private List<IntervalTriplet> triplets;
+				
+			} else {
+				result.parseException = "CMEPRecord did not match regex /" + recordRegex + "/";
+			}
+		} catch (Exception e) {
+			result.parseException = "Error parsing record: " + e.getMessage();
+		}
+
 		return result;
 	}
 	
