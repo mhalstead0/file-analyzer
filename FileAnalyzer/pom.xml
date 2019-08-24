@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.matthalstead.cmep</groupId>
   <artifactId>file-analyzer</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   
   <properties>
   	<log4j.version>1.2.16</log4j.version>
