@@ -27,10 +27,6 @@ public class CMEPRecord {
 	
 	private String parseException;
 	
-	public CMEPRecord(String line) {
-		this(line.split(","));
-	}
-	
 	public CMEPRecord(String[] fields) {
 		try {
 			recordType = internString(safeGetString(fields, 0));
@@ -49,6 +45,12 @@ public class CMEPRecord {
 		} catch (Exception e) {
 			parseException = e.getMessage();
 		}
+	}
+	
+	public static CMEPRecord parse(String line) {
+		String[] fields = line.split(",");
+		CMEPRecord result = new CMEPRecord(fields);
+		return result;
 	}
 	
 	

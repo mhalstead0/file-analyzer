@@ -7,7 +7,7 @@ public abstract class AbstractCMEPConsumer extends AbstractLineConsumer {
 
 	@Override
 	public final void consumeLine(String str, int lineIndex) {
-		CMEPRecord record = new CMEPRecord(str);
+		CMEPRecord record = CMEPRecord.parse(str);
 		consumeRecord(record, lineIndex);
 	}
 	

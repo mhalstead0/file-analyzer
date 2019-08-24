@@ -94,7 +94,7 @@ public class ProcessGasCMEPTask implements Task {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String line;
 		while ((line = br.readLine()) != null) {
-			csvCreator.handleCMEPRecord(new CMEPRecord(line));
+			csvCreator.handleCMEPRecord(CMEPRecord.parse(line));
 		}
 		csvCreator.finish();
 		fos.close();
