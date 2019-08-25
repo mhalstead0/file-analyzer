@@ -58,7 +58,15 @@ public class CMEPRecord {
 		String oneFieldRegex = "([^,]*)(,|\\Z)";
 		String okFieldRegex = "OK,";
 		String digitsFieldRegex = "([0-9]*),";
-		String timestampRegex = "[12][0-9]{11}";
+		
+		String yearRegex = "[12][0-9]{3}";
+		String monthRegex = "[01][0-9]";
+		String dayRegex = "[0123][0-9]";
+		String hourRegex = "[012][0-9]";
+		String minuteRegex = "[0-5][0-9]";
+		
+		String timestampRegex = yearRegex + monthRegex + dayRegex + hourRegex + minuteRegex;
+		
 		String dqfRegex = "[A-Z][0-9]+";
 		String intervalValueRegex = "-?([0-9]+)|([0-9]*\\.[0-9]+)";
 		String intervalRegex = "(" + timestampRegex + "),(" + dqfRegex + "),(" + intervalValueRegex + ")(,|\\Z)";
@@ -82,21 +90,39 @@ public class CMEPRecord {
 			Matcher m = pattern.matcher(line);
 			if (m.matches()) {
 				String identifyingInfo = m.group(9);
-				String intervals = m.group(18);
+				String intervalsString = m.group(18);
 
 				System.out.println("identifyingInfo=" + identifyingInfo);
-				System.out.println("intervals=" + intervals);
+				System.out.println("intervalsString=" + intervalsString);
 
 				result.recordType = m.group(1);
 				result.units = m.group(12);
 				result.intervalLengthCode = m.group(16);
 				result.listedIntervalCount = Integer.parseInt(m.group(17));
-				//private String moduleId;
-				//private String meterId;
-				//private Long fileTimestamp;
-				//private String meterLocation;
-
-//				private List<IntervalTriplet> triplets;
+				
+				String identifyingInfoRegex = "([^,]*),(.*),(" + timestampRegex + "),(.*)";
+				Pattern identifyingInfoPattern = Pattern.compile(identifyingInfoRegex);
+				Matcher m2 = identifyingInfoPattern.matcher(identifyingInfo);
+				if (m2.matches()) {
+					result.moduleId = m2.group(1);
+					result.meterId = m2.group(2);
+					String timestampString = m2.group(3);
+					Date date = DateUtils.parseCMEPTimestamp(timestampString);
+					result.fileTimestamp = dateToLong(date);
+					result.meterLocation = m2.group(4);
+					
+				} else {
+					System.out.println("Identifying info did not match regex /" + identifyingInfoRegex + "/");
+					result.parseException = "Could not parse identifying info";
+				}
+				
+				String[] intervalFields = intervalsString.split(",");
+				List<IntervalTriplet> intervalTriplets = new ArrayList<>(intervalFields.length / 3);
+				for (int i=0; i<intervalFields.length; i+=3) {
+					IntervalTriplet intervalTriplet = new IntervalTriplet(intervalFields, i);
+					intervalTriplets.add(intervalTriplet);
+				}
+				result.triplets = intervalTriplets;
 				
 			} else {
 				result.parseException = "CMEPRecord did not match regex /" + recordRegex + "/";

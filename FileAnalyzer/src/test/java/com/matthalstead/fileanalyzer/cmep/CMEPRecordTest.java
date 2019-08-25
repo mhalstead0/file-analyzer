@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.matthalstead.fileanalyzer.cmep.CMEPRecord.IntervalTriplet;
@@ -65,7 +64,6 @@ public class CMEPRecordTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testMeterIdWithLeadingComma() throws Exception {
 
 		String str = "MEPMD01,20080501,VENDOR,UTIL:153000,1234567,9876543,201907091845,,9988776,OK,G,CCFREG,1.0,00000100,2,201907080500,R0,2073,201907090500,R0,2074";
