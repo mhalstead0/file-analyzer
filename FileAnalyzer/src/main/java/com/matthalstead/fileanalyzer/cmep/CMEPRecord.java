@@ -92,9 +92,6 @@ public class CMEPRecord {
 				String identifyingInfo = m.group(9);
 				String intervalsString = m.group(18);
 
-				System.out.println("identifyingInfo=" + identifyingInfo);
-				System.out.println("intervalsString=" + intervalsString);
-
 				result.recordType = m.group(1);
 				result.units = m.group(12);
 				result.intervalLengthCode = m.group(16);
