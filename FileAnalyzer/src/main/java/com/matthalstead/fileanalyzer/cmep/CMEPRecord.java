@@ -1,7 +1,6 @@
 package com.matthalstead.fileanalyzer.cmep;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,87 +28,35 @@ public class CMEPRecord {
 	
 	private String parseException;
 	
-	private CMEPRecord() {
-		
-	}
-	
-	public CMEPRecord(String[] fields) {
-		try {
-			recordType = internString(safeGetString(fields, 0));
-			moduleId = safeGetString(fields, 4);
-			meterId = safeGetString(fields, 5);
-			fileTimestamp = dateToLong(DateUtils.parseCMEPTimestamp(safeGetString(fields, 6)));
-			meterLocation = safeGetString(fields, 7);
-			units = internString(safeGetString(fields, 10));
-			intervalLengthCode = internString(safeGetString(fields, 12));
-			listedIntervalCount = Integer.parseInt(safeGetString(fields, 13));
-			List<IntervalTriplet> triplets = new ArrayList<IntervalTriplet>(0);
-			for (int i=14; i<fields.length; i+=3) {
-				triplets.add(new IntervalTriplet(fields, i));
-			}
-			this.triplets = Collections.unmodifiableList(triplets);
-		} catch (Exception e) {
-			parseException = e.getMessage();
-		}
-	}
+	private CMEPRecord() { }
 	
 	public static CMEPRecord parse(String line) {
-		//MEPMD01,20080501,VENDOR,UTIL:153000,1234567,9876543,201907091845,,9988776,OK,G,CCFREG,1.0,00000100,2,201907080500,R0,2073,201907090500,R0,2074
-		String oneFieldRegex = "([^,]*)(,|\\Z)";
-		String okFieldRegex = "OK,";
-		String digitsFieldRegex = "([0-9]*),";
-		
-		String yearRegex = "[12][0-9]{3}";
-		String monthRegex = "[01][0-9]";
-		String dayRegex = "[0123][0-9]";
-		String hourRegex = "[012][0-9]";
-		String minuteRegex = "[0-5][0-9]";
-		
-		String timestampRegex = yearRegex + monthRegex + dayRegex + hourRegex + minuteRegex;
-		
-		String dqfRegex = "[A-Z][0-9]+";
-		String intervalValueRegex = "-?([0-9]+)|([0-9]*\\.[0-9]+)";
-		String intervalRegex = "(" + timestampRegex + "),(" + dqfRegex + "),(" + intervalValueRegex + ")(,|\\Z)";
-		String recordRegex =
-				oneFieldRegex // recordType
-				+ oneFieldRegex // formatDate
-				+ oneFieldRegex // vendor
-				+ oneFieldRegex // utility
-				+ "(.*)," // meter-identifying info
-				+ okFieldRegex
-				+ oneFieldRegex // meter type
-				+ oneFieldRegex // units
-				+ oneFieldRegex // meter multiplier
-				+ digitsFieldRegex // interval length code
-				+ digitsFieldRegex // listed interval count
-				+ "((" + intervalRegex + ")*)"; // intervals
 		
 		CMEPRecord result = new CMEPRecord();
 		try {
-			Pattern pattern = Pattern.compile(recordRegex);
-			Matcher m = pattern.matcher(line);
+			Pattern cmepRecordPattern = CMEPRecordRegex.getCMEPRecordPattern();
+			Matcher m = cmepRecordPattern.matcher(line);
 			if (m.matches()) {
-				String identifyingInfo = m.group(9);
-				String intervalsString = m.group(18);
 
-				result.recordType = m.group(1);
-				result.units = m.group(12);
-				result.intervalLengthCode = m.group(16);
+				result.recordType = internString(m.group(1));
+				result.units = internString(m.group(12));
+				result.intervalLengthCode = internString(m.group(16));
 				result.listedIntervalCount = Integer.parseInt(m.group(17));
 				
-				String identifyingInfoRegex = "([^,]*),(.*),(" + timestampRegex + "),(.*)";
-				Pattern identifyingInfoPattern = Pattern.compile(identifyingInfoRegex);
+				String identifyingInfo = m.group(9);
+				String intervalsString = m.group(18);
+				Pattern identifyingInfoPattern = CMEPRecordRegex.getIdentifyingInfoPattern();
 				Matcher m2 = identifyingInfoPattern.matcher(identifyingInfo);
 				if (m2.matches()) {
-					result.moduleId = m2.group(1);
-					result.meterId = m2.group(2);
+					result.moduleId = internString(m2.group(1));
+					result.meterId = internString(m2.group(2));
 					String timestampString = m2.group(3);
 					Date date = DateUtils.parseCMEPTimestamp(timestampString);
 					result.fileTimestamp = dateToLong(date);
-					result.meterLocation = m2.group(4);
+					result.meterLocation = internString(m2.group(4));
 					
 				} else {
-					System.out.println("Identifying info did not match regex /" + identifyingInfoRegex + "/");
+					System.out.println("Identifying info did not match regex /" + identifyingInfoPattern.pattern() + "/");
 					result.parseException = "Could not parse identifying info";
 				}
 				
@@ -122,7 +69,7 @@ public class CMEPRecord {
 				result.triplets = intervalTriplets;
 				
 			} else {
-				result.parseException = "CMEPRecord did not match regex /" + recordRegex + "/";
+				result.parseException = "CMEPRecord did not match regex /" + cmepRecordPattern.pattern() + "/";
 			}
 		} catch (Exception e) {
 			result.parseException = "Error parsing record: " + e.getMessage();
@@ -136,19 +83,14 @@ public class CMEPRecord {
 		return parseException;
 	}
 	
-	private static String safeGetString(String[] fields, int index) {
-		String str = (index < 0 || index >= fields.length) ? null : fields[index];
-		if (str != null) {
-			str = str.trim();
-			if (str.length() == 0) {
-				str = null;
-			}
-		}
-		return str;
-	}
 	private static String internString(String str) {
-		return (str == null) ? str : str.intern();
+		if (str == null) {
+			return null;
+		} else {
+			return str.intern();
+		}
 	}
+	
 	private static Date longToDate(Long l) {
 		return (l == null) ? null : new Date(l.longValue());
 	}
