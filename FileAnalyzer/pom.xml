@@ -12,7 +12,7 @@
   	<commons-codec.version>1.6</commons-codec.version>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
   </properties>
   
   <dependencies>
