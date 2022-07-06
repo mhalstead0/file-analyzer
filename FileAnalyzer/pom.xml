@@ -6,7 +6,7 @@
   
   <properties>
   	<log4j.version>1.2.16</log4j.version>
-  	<jsch.version>0.1.48</jsch.version>
+  	<jsch.version>0.1.54</jsch.version>
   	<jzlib.version>1.1.2</jzlib.version>
   	<commons-cli.version>1.2</commons-cli.version>
   	<commons-codec.version>1.6</commons-codec.version>
